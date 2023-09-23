@@ -1,0 +1,29 @@
+#!/bin/sh
+
+start() {
+    echo "Starting linux kernel module"
+    start-stop-daemon --start -n scull_load -a /sbin/scull_load
+    start-stop-daemon --start -n module_load -a /sbin/module_load -- faulty
+    modprobe -v hello
+}
+
+stop() {
+    echo "Stopping linux kernel module"
+    start-stop-daemon --start -n scull_unload -a /sbin/scull_unload
+    start-stop-daemon --start -n module_unload -a /sbin/module_unload -- faulty
+    rmmod -v hello
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+esac
+
+exit 0
